@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.example.lemonade_stand.database.BillCounter;
 import com.example.lemonade_stand.database.BillCounterRepository;
@@ -17,6 +18,7 @@ import com.example.lemonade_stand.database.BillCounterRepository;
  * total sales, profits, and bill denominations using a database.
  */
 @Component
+@Service
 @Scope("prototype") // New instance for each request
 public class OrderProcessorMultiDay {
 
@@ -60,7 +62,7 @@ public class OrderProcessorMultiDay {
 	 */
 	public String processOrders(List<CustomerOrder> orders) {
 		if (orders == null || orders.isEmpty()) {
-			return "No orders to process.";
+			return "null";// Return "null" if the order list is empty
 		}
 
 		// Sort the orders based on the customers' position in line.
@@ -69,7 +71,7 @@ public class OrderProcessorMultiDay {
 		// Process each order in sequence
 		for (CustomerOrder order : orders) {
 			if (processSingleOrder(order.getBillValue(), order.getRequestedLemonades()) == -1) {
-				return "Error processing order.";
+				return "null";// Order processing failed
 			}
 		}
 

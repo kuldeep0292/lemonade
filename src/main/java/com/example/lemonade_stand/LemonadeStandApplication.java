@@ -1,4 +1,4 @@
-package com.example.lemonade_stand.controller;
+package com.example.lemonade_stand;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

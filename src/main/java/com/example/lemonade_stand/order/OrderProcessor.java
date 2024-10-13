@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Class responsible for processing lemonade orders and managing the bill
  * inventory.
  */
 @Component
+@Service
 @Scope("prototype") // Creates a new instance for each request
 public class OrderProcessor {
 

@@ -47,7 +47,7 @@ Before you begin, ensure you have met the following requirements:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/lemonade-stand.git
+git clone https://github.com/kuldeep0292/lemonade.git
 cd lemonade-stand
 ```
 
