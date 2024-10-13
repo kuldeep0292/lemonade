@@ -1,0 +1,11 @@
+# Ignore IDE-specific files
+.classpath
+.project
+.settings/
+
+# Ignore build output
+target/
+
+# Ignore Maven Wrapper if not needed
+mvnw
+mvnw.cmd
