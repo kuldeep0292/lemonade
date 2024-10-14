@@ -1,56 +1,49 @@
 package com.example.lemonade_stand.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.lemonade_stand.order.CustomerOrder;
 import com.example.lemonade_stand.order.OrderProcessor;
-import com.example.lemonade_stand.order.OrderProcessorMultiDay;
-
-import java.util.List;
 
 /**
- * Controller for handling lemonade orders.
- * Provides endpoints for processing orders and retrieving sales reports.
+ * Controller for handling lemonade stand operations, including processing
+ * orders and generating reports.
  */
 @RestController
-@RequestMapping("/api/orders")
-@Component
-@Scope("prototype") // Ensures a new instance is created for each request
+@RequestMapping("api/orders")
 public class LemonadeController {
 
-    @Autowired
-    private OrderProcessor orderProcessor; // Single-day order processor service
-    
-    @Autowired
-    private OrderProcessorMultiDay orderProcessorMultiDay; // Multi-day order processor service
+	@Autowired
+	private OrderProcessor orderProcessor;
 
-    /**
-     * Endpoint to process a list of customer orders.
-     * 
-     * @param orders A list of CustomerOrder objects received via POST request body.
-     * @return A string representing the result of the order processing (e.g., bills remaining).
-     * 
-     * This method uses the multi-day processor to handle orders.
-     */
-    @PostMapping("/process")
-    public String processOrders(@RequestBody List<CustomerOrder> orders) {
-        // Process customer orders using the multi-day order processor.
-        return orderProcessorMultiDay.processOrders(orders);
-    }
+	/**
+	 * Endpoint for processing lemonade orders.
+	 * 
+	 * @param orders List of customer orders.
+	 * @return String representing the remaining bills or "null" if failed.
+	 */
+	@PostMapping("/process")
+	public String processOrder(@RequestBody List<CustomerOrder> orders) {
+		String result = orderProcessor.processOrders(orders);
+		StringBuilder response = new StringBuilder();
+		response = response.append(result).append("\n\n").append(orderProcessor.getCompleteSalesReport());
+		return response.toString();
+	}
 
-    /**
-     * Endpoint to retrieve the sales report.
-     * 
-     * @return A string report detailing total sales, profit, and remaining bills.
-     * 
-     * This method retrieves the sales report for multiple days of operation.
-     */
-    @GetMapping("/report")
-    public String getReport() {
-        // Return the sales report from the multi-day order processor.
-        return orderProcessorMultiDay.printReport();
-    }
+	/**
+	 * Endpoint for generating a report of total lemonades sold and remaining bills.
+	 * 
+	 * @return Report string with sales and bill information.
+	 */
+	@GetMapping("/report")
+	public String generateReport() {
+		return orderProcessor.getCompleteSalesReport();
+	}
 }
