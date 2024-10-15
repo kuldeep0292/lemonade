@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.lemonade_stand.exception_handler.InvalidOrderException;
 import com.example.lemonade_stand.order.CustomerOrder;
 import com.example.lemonade_stand.order.OrderProcessor;
 import com.example.lemonade_stand.order.OrderRepositoryService;
