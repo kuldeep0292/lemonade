@@ -28,7 +28,7 @@ class OrderProcessorTests {
 		// Arrange: Clear records for independent test execution and initialize bill
 		// counter
 		orderRepositoryService.clearAllRecords();
-		orderProcessor.initializeBillCounter();
+		orderProcessor.initializeDB();
 	}
 
 	/**

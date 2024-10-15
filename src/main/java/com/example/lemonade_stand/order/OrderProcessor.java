@@ -12,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.example.lemonade_stand.database.BillCounterRecord;
-import com.example.lemonade_stand.database.BillCounterRepository;
 import com.example.lemonade_stand.database.SalesRecord;
 import com.example.lemonade_stand.database.SalesRepository;
+import com.example.lemonade_stand.exception_handler.InvalidOrderException;
 import com.example.lemonade_stand.util.AppConstants;
 
 /**
@@ -29,8 +28,6 @@ public class OrderProcessor {
 	@Autowired
 	private OrderRepositoryService orderRepositoryService;
 	@Autowired
-	private BillCounterRepository billCounterRepository; // Repository to manage bills in the database
-	@Autowired
 	private SalesRepository salesRepository; // Repository to manage bills in the database
 	private Map<Integer, Integer> billsFromThisOrder = new HashMap<>(); // Using map to track bills for this order batch
 	private int lemonadesSold;
@@ -41,10 +38,11 @@ public class OrderProcessor {
 	 * created.
 	 */
 	@PostConstruct
-	public void initializeBillCounter() {
+	public void initializeDB() {
 		for (int denomination : AppConstants.BILL_DENOMINATIONS) {
 			orderRepositoryService.initializeBill(denomination);
 		}
+		orderRepositoryService.initializeSalesFigures();
 	}
 
 	/**
@@ -70,10 +68,10 @@ public class OrderProcessor {
 	 *         the bills consumed for change.
 	 */
 	public String processOrders(List<CustomerOrder> orders) {
-		resetCurrentOrder();
-		if (orders == null || orders.isEmpty()) {
+		if (orders == null || orders.isEmpty() || orders.contains(null)) {
 			return "null"; // Return "null" if the order list is empty
 		}
+		resetCurrentOrder();
 
 		// Sort the orders based on the customers' position in line.
 		orders.sort(Comparator.comparingInt(CustomerOrder::getPositionInLine));

@@ -8,12 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.example.lemonade_stand.database.BillCounterRecord;
 import com.example.lemonade_stand.database.BillCounterRepository;
+import com.example.lemonade_stand.database.SalesRecord;
+import com.example.lemonade_stand.database.SalesRepository;
 
 @Service
 public class OrderRepositoryService {
 
 	@Autowired
-	private BillCounterRepository lemonadeStandRecordRepository;
+	private BillCounterRepository billCounterRepository;
+
+	@Autowired
+	private SalesRepository salesRepository;
 
 	private Map<Integer, Integer> billsConsumedFromDB = new HashMap<>(); // map to keep track of bills consumed from db
 
@@ -23,8 +28,19 @@ public class OrderRepositoryService {
 	 * @param denomination The bill denomination to initialize.
 	 */
 	public void initializeBill(int denomination) {
-		if (lemonadeStandRecordRepository.findByBillDenomination(denomination) == null) {
-			lemonadeStandRecordRepository.save(new BillCounterRecord(denomination, 0));
+		if (billCounterRepository.findByBillDenomination(denomination) == null) {
+			billCounterRepository.save(new BillCounterRecord(denomination, 0));
+		}
+	}
+
+	/**
+	 * Initializes a bill record in the database if it doesn't already exist.
+	 *
+	 * @param denomination The bill denomination to initialize.
+	 */
+	public void initializeSalesFigures() {
+		if (salesRepository.findFirstByOrderByIdDesc() == null) {
+			salesRepository.save(new SalesRecord());
 		}
 	}
 
@@ -36,7 +52,7 @@ public class OrderRepositoryService {
 	 * @return The number of bills available for the specified denomination.
 	 */
 	public int getBillCountInDatabase(int denomination) {
-		BillCounterRecord lemonadeStandRecord = lemonadeStandRecordRepository.findByBillDenomination(denomination);
+		BillCounterRecord lemonadeStandRecord = billCounterRepository.findByBillDenomination(denomination);
 		return lemonadeStandRecord != null ? lemonadeStandRecord.getCount() : 0;
 	}
 
@@ -46,10 +62,10 @@ public class OrderRepositoryService {
 	 * @param billValue The denomination of the bill to be added.
 	 */
 	public void addBillToDatabase(int billValue) {
-		BillCounterRecord record = lemonadeStandRecordRepository.findByBillDenomination(billValue);
+		BillCounterRecord record = billCounterRepository.findByBillDenomination(billValue);
 		if (record != null) {
 			record.setCount(record.getCount() + 1);
-			lemonadeStandRecordRepository.save(record);
+			billCounterRepository.save(record);
 		}
 	}
 
@@ -59,17 +75,17 @@ public class OrderRepositoryService {
 	 * @param billValue The denomination of the bill to be removed.
 	 */
 	public void removeBillFromDatabase(int billValue) {
-		BillCounterRecord record = lemonadeStandRecordRepository.findByBillDenomination(billValue);
+		BillCounterRecord record = billCounterRepository.findByBillDenomination(billValue);
 		if (record != null && record.getCount() > 0) {
 			record.setCount(record.getCount() - 1);
-			lemonadeStandRecordRepository.save(record);
+			billCounterRepository.save(record);
 			// Track bills consumed from the database during the current order
 			billsConsumedFromDB.put(billValue, billsConsumedFromDB.getOrDefault(billValue, 0) + 1);
 		}
 	}
 
 	public BillCounterRecord getLastRecord() {
-		return lemonadeStandRecordRepository.findFirstByOrderByIdDesc();
+		return billCounterRepository.findFirstByOrderByIdDesc();
 	}
 
 	/**
@@ -94,8 +110,12 @@ public class OrderRepositoryService {
 	 */
 	public void clearAllRecords() {
 		// Check if records are present before deleting
-		if (lemonadeStandRecordRepository.count() > 0) {
-			lemonadeStandRecordRepository.deleteAll();
+		if (billCounterRepository.count() > 0) {
+			billCounterRepository.deleteAll();
+		}
+		// Check if records are present before deleting
+		if (salesRepository.count() > 0) {
+			salesRepository.deleteAll();
 		}
 	}
 }

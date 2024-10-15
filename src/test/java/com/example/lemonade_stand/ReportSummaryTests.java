@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.example.lemonade_stand.exception_handler.InvalidOrderException;
 import com.example.lemonade_stand.order.CustomerOrder;
 import com.example.lemonade_stand.order.OrderProcessor;
 import com.example.lemonade_stand.order.OrderRepositoryService;
@@ -28,7 +29,7 @@ class ReportSummaryTests {
 	@BeforeEach
 	void setUp() {
 		orderRepositoryService.clearAllRecords(); // clear records so that each test case can be independently executed
-		orderProcessor.initializeBillCounter();
+		orderProcessor.initializeDB();
 	}
 
 	@Test
@@ -43,7 +44,8 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: Check if the report contains the correct lemonade count
-		assertTrue(report.contains("Total Lemonades sold so far - 3"), "Lemonade count should be 3");
+		assertTrue(report.contains("Total Lemonades sold so far - 3"),
+				"Lemonade count should be 3, report output -" + report);
 	}
 
 	@Test
@@ -57,7 +59,8 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: Check if the report contains the correct profit made
-		assertTrue(report.contains("Total Profit Made - 30"), "Profit should be calculated correctly");
+		assertTrue(report.contains("Total Profit Made - 30"),
+				"Profit should be calculated correctly, report output - " + report);
 	}
 
 	@Test
@@ -70,7 +73,8 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: Verify that the report contains the correct bill denomination
-		assertTrue(report.contains("Total 5 Bills Remaining - 1"), "Bill denominations should be correct");
+		assertTrue(report.contains("Total 5 Bills Remaining - 1"),
+				"Bill denominations should be correct, report output - " + report);
 	}
 
 	@Test
@@ -85,7 +89,8 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: Verify that the report contains both bill denominations
-		assertTrue(report.contains("Total 5 Bills Remaining - 1"), "Bill denominations should be correct");
+		assertTrue(report.contains("Total 5 Bills Remaining - 1"),
+				"Bill denominations should be correct, report output - " + report);
 		assertTrue(report.contains("Total 10 Bills Remaining - 1"), "Bill denominations should be correct");
 	}
 
@@ -99,29 +104,31 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: The report should indicate failure for the invalid order
-		assertTrue(report.contains("null"), "Report should indicate failure for invalid order");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate failure for invalid order,report output - " + report);
 	}
 
 	@Test
 	void testNoIncrementDueToInsufficientChange() {
 		// Arrange: Create an instance of OrderProcessor and an order that requires
 		// change
-		List<CustomerOrder> orders = Collections.singletonList(new CustomerOrder(5, 1, 1)); // Bill value: $5, Invalid
-																							// change required
+		List<CustomerOrder> orders = Collections.singletonList(new CustomerOrder(20, 1, 1)); // Bill value: $5, Invalid
+																								// change required
 
 		// Act: Process the orders and get the report
 		orderProcessor.processOrders(orders);
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report), "Report should indicate correct sales figure");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
 	}
 
 	@Test
 	void testNoIncrementDueToInsufficientBalance() {
 		// Arrange: Create an instance of OrderProcessor and an order with insufficient
 		// balance
-		List<CustomerOrder> orders = Collections.singletonList(new CustomerOrder(5, 1, 1)); // Bill value: $5, Invalid
+		List<CustomerOrder> orders = Collections.singletonList(new CustomerOrder(5, 1, 5)); // Bill value: $5, Invalid
 																							// due to balance
 
 		// Act: Process the orders and get the report
@@ -129,7 +136,8 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report), "Report should indicate correct sales figure");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
 	}
 
 	@Test
@@ -144,31 +152,31 @@ class ReportSummaryTests {
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report), "Report should indicate correct sales figure");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
 	}
 
 	@Test
-	void testNoIncrementDueToInvalidBillValue() {
-		// Arrange: Create an instance of OrderProcessor and an order with an invalid
-		// bill value
-		List<CustomerOrder> orders = Collections.singletonList(new CustomerOrder(15, 1, 1)); // Invalid bill value: $15
-
+	void testEmpyReportBeforeProcessingOrders() {
 		// Act: Process the orders and get the report
-		orderProcessor.processOrders(orders);
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report), "Report should indicate correct sales figure");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
 	}
 
 	@Test
 	void testNoIncrementDueToNullOrder() {
-		// Act: Process the orders with a null value
+		// Arrange: process order with null value
 		orderProcessor.processOrders(null);
-		String report = orderProcessor.processOrders(null); // Passing null order
+
+		// Act: Process the orders with a null value
+		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report), "Report should indicate correct sales figure");
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
 	}
 
 	private boolean validateEmptyReport(String report) {

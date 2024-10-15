@@ -13,7 +13,6 @@ public class BillCounterRecord {
 	private Long id; // Unique identifier for the record
 	private int billDenomination; // The denomination of the bill
 	private int count; // Count of bills for this denomination
-	private int totalLemonadesSold; // Total number of lemonades sold for this denomination
 
 	// Default constructor
 	public BillCounterRecord() {
@@ -23,7 +22,6 @@ public class BillCounterRecord {
 	public BillCounterRecord(int billDenomination, int count) {
 		this.billDenomination = billDenomination;
 		this.count = count;
-		this.totalLemonadesSold = 0; // Initialize with zero sold
 	}
 
 	// Getters and Setters
