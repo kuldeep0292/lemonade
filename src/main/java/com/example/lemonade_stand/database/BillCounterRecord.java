@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class LemonadeStandRecord {
+public class BillCounterRecord {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,11 @@ public class LemonadeStandRecord {
 	private int totalLemonadesSold; // Total number of lemonades sold for this denomination
 
 	// Default constructor
-	public LemonadeStandRecord() {
+	public BillCounterRecord() {
 	}
 
 	// Constructor
-	public LemonadeStandRecord(int billDenomination, int count) {
+	public BillCounterRecord(int billDenomination, int count) {
 		this.billDenomination = billDenomination;
 		this.count = count;
 		this.totalLemonadesSold = 0; // Initialize with zero sold
@@ -43,14 +43,6 @@ public class LemonadeStandRecord {
 		this.count = count;
 	}
 
-	public int getTotalLemonadesSold() {
-		return totalLemonadesSold;
-	}
-
-	public void setTotalLemonadesSold(int totalLemonadesSold) {
-		this.totalLemonadesSold = totalLemonadesSold;
-	}
-
 	// Method to increment count of bills
 	public void incrementCount() {
 		this.count++;
@@ -61,11 +53,6 @@ public class LemonadeStandRecord {
 		if (this.count > 0) {
 			this.count--;
 		}
-	}
-
-	// Method to add to the total lemonades sold
-	public void incrementLemonadesSold(int amount) {
-		this.totalLemonadesSold += amount;
 	}
 
 	// Method to add bills

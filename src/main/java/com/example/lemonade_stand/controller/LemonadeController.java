@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.lemonade_stand.order.CustomerOrder;
 import com.example.lemonade_stand.order.OrderProcessor;
+import com.example.lemonade_stand.order.SalesReportGenerator;
 
 /**
  * Controller for handling lemonade stand operations, including processing
@@ -23,6 +24,9 @@ public class LemonadeController {
 	@Autowired
 	private OrderProcessor orderProcessor;
 
+	@Autowired
+	private SalesReportGenerator salesReportGenerator;
+
 	/**
 	 * Endpoint for processing lemonade orders.
 	 * 
@@ -33,7 +37,7 @@ public class LemonadeController {
 	public String processOrder(@RequestBody List<CustomerOrder> orders) {
 		String result = orderProcessor.processOrders(orders);
 		StringBuilder response = new StringBuilder();
-		response = response.append(result).append("\n\n").append(orderProcessor.getCompleteSalesReport());
+		response = response.append(result).append("\n\n").append(salesReportGenerator.getCompleteSalesReport());
 		return response.toString();
 	}
 
@@ -44,6 +48,6 @@ public class LemonadeController {
 	 */
 	@GetMapping("/report")
 	public String generateReport() {
-		return orderProcessor.getCompleteSalesReport();
+		return salesReportGenerator.getCompleteSalesReport();
 	}
 }
