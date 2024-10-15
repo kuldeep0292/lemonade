@@ -35,10 +35,7 @@ public class LemonadeController {
 	 */
 	@PostMapping("/process")
 	public String processOrder(@RequestBody List<CustomerOrder> orders) {
-		String result = orderProcessor.processOrders(orders);
-		StringBuilder response = new StringBuilder();
-		response = response.append(result).append("\n\n").append(salesReportGenerator.getCompleteSalesReport());
-		return response.toString();
+		return orderProcessor.processOrders(orders);
 	}
 
 	/**

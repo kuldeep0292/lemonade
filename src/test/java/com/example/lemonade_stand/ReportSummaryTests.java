@@ -31,7 +31,17 @@ class ReportSummaryTests {
 		orderRepositoryService.clearAllRecords(); // clear records so that each test case can be independently executed
 		orderProcessor.initializeDB();
 	}
+	
+	@Test
+	void testEmpyReportBeforeProcessingOrders() {
+		// Act: Process the orders and get the report
+		String report = salesReportGenerator.getCompleteSalesReport();
 
+		// Assert: validate report figures have not been incremented
+		assertTrue(validateEmptyReport(report),
+				"Report should indicate correct sales figure, report output - " + report);
+	}
+	
 	@Test
 	void testLemonadeCountInReport() {
 		// Arrange: Create an instance of OrderProcessor and a list of orders
@@ -149,16 +159,6 @@ class ReportSummaryTests {
 
 		// Act: Process the orders and get the report
 		orderProcessor.processOrders(orders);
-		String report = salesReportGenerator.getCompleteSalesReport();
-
-		// Assert: validate report figures have not been incremented
-		assertTrue(validateEmptyReport(report),
-				"Report should indicate correct sales figure, report output - " + report);
-	}
-
-	@Test
-	void testEmpyReportBeforeProcessingOrders() {
-		// Act: Process the orders and get the report
 		String report = salesReportGenerator.getCompleteSalesReport();
 
 		// Assert: validate report figures have not been incremented
