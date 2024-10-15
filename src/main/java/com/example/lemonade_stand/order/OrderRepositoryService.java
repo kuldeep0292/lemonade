@@ -46,10 +46,10 @@ public class OrderRepositoryService {
 	 * @param billValue The denomination of the bill to be added.
 	 */
 	public void addBillToDatabase(int billValue) {
-		BillCounterRecord lemonadeStandRecord = lemonadeStandRecordRepository.findByBillDenomination(billValue);
-		if (lemonadeStandRecord != null) {
-			lemonadeStandRecord.setCount(lemonadeStandRecord.getCount() + 1);
-			lemonadeStandRecordRepository.save(lemonadeStandRecord);
+		BillCounterRecord record = lemonadeStandRecordRepository.findByBillDenomination(billValue);
+		if (record != null) {
+			record.setCount(record.getCount() + 1);
+			lemonadeStandRecordRepository.save(record);
 		}
 	}
 
@@ -59,10 +59,10 @@ public class OrderRepositoryService {
 	 * @param billValue The denomination of the bill to be removed.
 	 */
 	public void removeBillFromDatabase(int billValue) {
-		BillCounterRecord lemonadeStandRecord = lemonadeStandRecordRepository.findByBillDenomination(billValue);
-		if (lemonadeStandRecord != null && lemonadeStandRecord.getCount() > 0) {
-			lemonadeStandRecord.setCount(lemonadeStandRecord.getCount() - 1);
-			lemonadeStandRecordRepository.save(lemonadeStandRecord);
+		BillCounterRecord record = lemonadeStandRecordRepository.findByBillDenomination(billValue);
+		if (record != null && record.getCount() > 0) {
+			record.setCount(record.getCount() - 1);
+			lemonadeStandRecordRepository.save(record);
 			// Track bills consumed from the database during the current order
 			billsConsumedFromDB.put(billValue, billsConsumedFromDB.getOrDefault(billValue, 0) + 1);
 		}

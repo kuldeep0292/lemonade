@@ -31,9 +31,9 @@ public class SalesReportGenerator {
 	 */
 	public String getCompleteSalesReport() {
 		SalesRecord salesRecord = salesRepository.findFirstByOrderByIdDesc();
+		List<BillCounterRecord> bills = billCounterRepository.findAll();
 		StringBuilder billsRemaining = new StringBuilder();
 
-		List<BillCounterRecord> bills = billCounterRepository.findAll();
 		for (BillCounterRecord bill : bills) {
 			billsRemaining.append(
 					String.format("Total %d Bills Remaining - %d\n", bill.getBillDenomination(), bill.getCount()));
